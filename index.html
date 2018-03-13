@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+</head>
+<body id="app">
+	<input type="" name="" value="" id="el">
+	<span id="span"></span>
+
+</body>
+<script type="text/javascript">
+
+	var el = document.getElementById('el')
+	var span = document.getElementById('span')
+
+	var dom = nodeToFragment(document.getElementById('app'));
+
+	function nodeToFragment(node){
+		var flag = document.createDocumentFragment();
+		var child;
+		while(child = node.firstChild){
+			flag.append(child);
+		}
+		return flag;
+	}
+
+	document.getElementById('app').appendChild(dom);
+	console.log(dom) 
+
+	var data = {name: 'kindeng'};
+	var val = '';
+
+	el.addEventListener('input',function(e){
+		val = e.target.value;
+		data.name = val
+		observe(data);
+	})	
+
+	
+	function observe(data) {
+		console.log(data)
+	    if (!data || typeof data !== 'object') {
+	        return;
+	    }
+	    // 取出所有属性遍历
+	    Object.keys(data).forEach(function(key) {
+	        defineReactive(data, key, data[key]);
+	    });
+	};
+
+	function defineReactive(data, key, val){
+		observe(val); // 监听子属性
+	    Object.defineProperty(data, key, {
+	        enumerable: true, // 可枚举
+	        configurable: false, // 不能再define
+	        get: function() {
+	        	console.log('我获取到了值' + val)
+	            return val;
+	        },
+	        set: function(newVal) {
+	        	if(val === newVal){
+	            	console.log('数据没有变化，不用管');
+	            	return val
+	        	}
+	            console.log('哈哈哈，监听到值变化了 ', val, ' --> ', newVal);
+	            val = newVal;
+	            span.innerHTML = val
+	        }
+	    });
+	}
+</script>
+</html>
